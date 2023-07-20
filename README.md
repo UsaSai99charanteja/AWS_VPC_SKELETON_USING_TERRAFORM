@@ -1,6 +1,6 @@
 # AWS_VPC_SKELETON_USING_TERRAFORM
 AWS_VPC_SKELETON_USING_TERRAFORM
-Image Courtesy: AWS
+Image_Courtesy: AWS
 ![image](https://github.com/UsaSai99charanteja/AWS_VPC_SKELETON_USING_TERRAFORM/assets/107063715/3fd4bc74-0e13-4892-ad3a-673414de9c79)
 
 VPC Deployment using Terraform
