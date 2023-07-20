@@ -1,3 +1,4 @@
+# creating the vpc 
 resource "aws_vpc" "eks_vpc" {
   cidr_block = var.vpc_cidr
   enable_dns_hostnames = true
@@ -8,7 +9,7 @@ resource "aws_vpc" "eks_vpc" {
   }
 
 }
-
+# create the Internet Gateway to provide internet access to our infrastructure
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.eks_vpc.id
 
@@ -16,9 +17,10 @@ resource "aws_internet_gateway" "igw" {
     Name = "${var.project_name}-igw"
   }  
 }
-
+# Get the available AZ's
 data "aws_availability_zones" "available_zones" {}
 
+# Create Public subnets
 resource "aws_subnet" "pub1" {
     vpc_id = aws_vpc.eks_vpc.id
     cidr_block = var.pub1_cidr
@@ -32,6 +34,7 @@ resource "aws_subnet" "pub1" {
   
 }
 
+# Create Public subnets
 resource "aws_subnet" "pub2" {
     vpc_id = aws_vpc.eks_vpc.id
     cidr_block = var.pub2_cidr
@@ -45,6 +48,7 @@ resource "aws_subnet" "pub2" {
   
 }
 
+# Create the Route to the Internet Gateway
 resource "aws_route_table" "public_rt" {
     vpc_id = aws_vpc.eks_vpc.id
     route {
@@ -58,16 +62,19 @@ resource "aws_route_table" "public_rt" {
   
 }
 
+# Attach the Created RT to the appropriate subnet
 resource "aws_route_table_association" "Public_RT_ASSC-1" {
     subnet_id = aws_subnet.pub1.id
     route_table_id = aws_route_table.public_rt.id
 }
 
+# Attach the Created RT to the appropriate subnet
 resource "aws_route_table_association" "Public_RT_ASSC-2" {
     subnet_id = aws_subnet.pub2.id
     route_table_id = aws_route_table.public_rt.id
 }
 
+# Create Private subnets
 resource "aws_subnet" "priv1" {
     vpc_id = aws_vpc.eks_vpc.id
     cidr_block = var.priv1_cidr
@@ -81,6 +88,7 @@ resource "aws_subnet" "priv1" {
   
 }
 
+# Create Private subnets
 resource "aws_subnet" "priv2" {
     vpc_id = aws_vpc.eks_vpc.id
     cidr_block = var.priv2_cidr
@@ -94,6 +102,7 @@ resource "aws_subnet" "priv2" {
   
 }
 
+# Create the Elastic IP Add - Used for NATGW
 resource "aws_eip" "ELIP-1" {
   vpc = true
 
@@ -102,6 +111,7 @@ resource "aws_eip" "ELIP-1" {
   }
 }
 
+# Create the Elastic IP Add - Used for NATGW
 resource "aws_eip" "ELIP-2" {
   vpc = true
 
@@ -109,6 +119,8 @@ resource "aws_eip" "ELIP-2" {
     Name = "ELIP2"
   }
 }
+
+# Create the Nat Gw to give the internet access to the private subnet
  resource "aws_nat_gateway" "NGW-1" {
   subnet_id = aws_subnet.pub1
   allocation_id = aws_eip.ELIP-1.id
@@ -120,6 +132,7 @@ resource "aws_eip" "ELIP-2" {
   
 }
 
+# Create the Nat Gw to give the internet access to the private sub
 resource "aws_nat_gateway" "NGW-2" {
   subnet_id = aws_subnet.pub2
   allocation_id = aws_eip.ELIP-2.id
@@ -132,7 +145,7 @@ resource "aws_nat_gateway" "NGW-2" {
 }
 
 
-
+# Create the Route to the NAT Gateway
 resource "aws_route_table" "Priv-RT-1" {
    vpc_id = aws_vpc.eks_vpc.id
     route {
@@ -147,6 +160,7 @@ resource "aws_route_table" "Priv-RT-1" {
   
 }
 
+# Create the Route to the NAT Gateway
 resource "aws_route_table" "Priv-RT-2" {
    vpc_id = aws_vpc.eks_vpc.id
     route {
@@ -161,11 +175,13 @@ resource "aws_route_table" "Priv-RT-2" {
   
 }
 
+# Attach the Created RT to the appropriate subnet
 resource "aws_route_table_association" "Priv-RT-ASSC-1" {
   subnet_id = aws_subnet.priv1.id
   route_table_id = aws_route_table.Priv-RT-1.id
 }
 
+# Attach the Created RT to the appropriate subnet
 resource "aws_route_table_association" "Priv-RT-ASSC-2" {
   subnet_id = aws_subnet.priv2.id
   route_table_id = aws_route_table.Priv-RT-2.id
