@@ -1,5 +1,8 @@
 # AWS_VPC_SKELETON_USING_TERRAFORM
 AWS_VPC_SKELETON_USING_TERRAFORM
+Image Courtesy: AWS
+![image](https://github.com/UsaSai99charanteja/AWS_VPC_SKELETON_USING_TERRAFORM/assets/107063715/3fd4bc74-0e13-4892-ad3a-673414de9c79)
+
 VPC Deployment using Terraform
 This repository contains Terraform code to deploy a Virtual Private Cloud (VPC) on AWS. The VPC consists of two private and two public subnets, an Internet Gateway (IGW), and two NAT Gateways. Appropriate route tables are associated with the respective subnets to ensure proper network connectivity.
 
